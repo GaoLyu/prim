@@ -22,6 +22,26 @@ typedef struct records {
   int numTreeEdges;   // current number of edges in mst
 } Records;
 
+
+
+
+
+
+void pp(AdjList* paths, int numVertices) {
+  if (paths == NULL) return;
+
+  for (int i = 0; i < numVertices; i++) {
+    printf("From vertex %d: ", i);
+    printAdjList(&paths[i]);
+    printf("\n");
+  }
+}
+
+
+
+
+
+
 /*************************************************************************
  ** Suggested helper functions, to help with your program design
  *************************************************************************/
@@ -72,6 +92,7 @@ Records* initRecords(Graph* graph, int startVertex, int alg){
   if(alg==1){//dijkstra
     record->tree=malloc(sizeof(Edge)*(numVertices));
   }
+
   return record;
 
   //heap contains all vertex, numtreeed
@@ -100,7 +121,6 @@ void addTreeEdge(Records* records, int ind, int fromVertex, int toVertex,
 /* Creates and returns a path from 'vertex' to 'startVertex' from edges
  * in the distance tree 'distTree'.
  */
-//??????????????????how many edges
 AdjList* makePath(Edge* distTree, int vertex, int startVertex){
   if(vertex==startVertex){
     return NULL;
@@ -112,19 +132,21 @@ AdjList* makePath(Edge* distTree, int vertex, int startVertex){
   else{
     nextVertexId=distTree[vertex].fromVertex;
   }
-  AdjList* result=malloc(sizeof(AdjList));
-  result->edge->fromVertex=distTree[vertex].fromVertex;
-  result->edge->toVertex=distTree[vertex].toVertex;
-  result->edge->weight=distTree[vertex].weight-distTree[nextVertexId].weight;
-  result->next=makePath(distTree,nextVertexId,startVertex);
+  //printf("!!!!!!!!!!!\ncurrentID is %d  nextVerticeId is %d\n\n",vertex,nextVertexId);
+  AdjList* result=newAdjList(newEdge(distTree[vertex].fromVertex,distTree[vertex].toVertex,distTree[vertex].weight-distTree[nextVertexId].weight),makePath(distTree,nextVertexId,startVertex));
+
+  // malloc(sizeof(AdjList));
+  // result->edge=newEdge(distTree[vertex].fromVertex,distTree[vertex].toVertex,distTree[vertex].weight-distTree[nextVertexId].weight);
+
+  // result->next=makePath(distTree,nextVertexId,startVertex);
   //????????????????????can we directly give the address of distTree[] or copy the whole things
-  
   return result;
 }
 
 /*************************************************************************
  ** Required functions.
  *************************************************************************/
+
 /* Runs Prim's algorithm on Graph 'graph' starting from vertex with ID
  * 'startVertex', and return the resulting MST: an array of Edges.
  * Returns NULL if 'startVertex' is not valid in 'graph'.
@@ -136,17 +158,17 @@ Edge* primGetMST(Graph* graph, int startVertex){
   if(startVertex<0 || startVertex>=numVertices){
     return NULL;
   }
-  Vertex currentVertex;
+  //Vertex currentVertex;
   AdjList* adjList;
   int adjId;
-  Records records=initRecords(graph,startVertex,0);
+  Records* records=initRecords(graph,startVertex,0);
   while(!(isEmpty(records->heap))){
     HeapNode currentNode=extractMin(records->heap);
     int currentId=currentNode.id;
     int currentWeight=currentNode.priority;
     Vertex currentVertex=graph->vertices[currentId];
     if(currentId!=startVertex){
-      addTreeEdge(records,records->numTreeEdges,records->predecessors[currentId],currentId,currentWeight);
+      addTreeEdge(records,records->numTreeEdges,currentId,records->predecessors[currentId],currentWeight);
     }
     adjList=currentVertex.adjList;
     while(adjList!=NULL){
@@ -156,7 +178,7 @@ Edge* primGetMST(Graph* graph, int startVertex){
       else{
         adjId=adjList->edge->fromVertex;
       }
-      if(finished[adjId]==false && adjList->edge->weight<getPriority(records->heap,adjId)){
+      if(records->finished[adjId]==false && adjList->edge->weight<getPriority(records->heap,adjId)){
         decreasePriority(records->heap,adjId,adjList->edge->weight);
         records->predecessors[adjId]=currentId;
       }
@@ -181,11 +203,11 @@ Edge* getShortestPaths(Graph* graph, int startVertex){
   if(startVertex<0 || startVertex>=numVertices){
     return NULL;
   }
-  Vertex currentVertex;
+  //Vertex currentVertex;
   AdjList* adjList;
   int adjId;
   int totalWeight;
-  Records records=initRecords(graph,startVertex,1);
+  Records* records=initRecords(graph,startVertex,1);
   while(!(isEmpty(records->heap))){
     HeapNode currentNode=extractMin(records->heap);
     int currentId=currentNode.id;
@@ -235,9 +257,19 @@ AdjList* getPaths(Edge* distTree, int numVertices, int startVertex){
   if(startVertex<0 || startVertex>=numVertices){
     return NULL;
   }
+  AdjList* temp;
   AdjList* result=malloc(sizeof(AdjList)*numVertices);
   for(int i=0;i<numVertices;i++){
-    result[i]=makePath(distTree,u,startVertex);
+    temp=makePath(distTree,i,startVertex);
+    if(temp==NULL){
+      result[i].edge=NULL;
+      result[i].next=NULL;
+    }
+    else{
+      result[i].edge=temp->edge;
+      result[i].next=temp->next;
+    }
+    
   }
   return result;
 }
