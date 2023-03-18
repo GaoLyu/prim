@@ -19,6 +19,7 @@ Prim's from 0 returned this MST:
 (8 -- 2, 2)
 (3 -- 2, 7)
 (4 -- 3, 9)
+//order??
 Total weight: 37
 
 Dijkstra's from 0 returned this distance tree:

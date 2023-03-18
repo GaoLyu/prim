@@ -18,7 +18,7 @@
 
 /* Runs Prim's algorithm on Graph 'graph' starting from vertex with ID
  * 'startVertex', and return the resulting MST: an array of Edges.
- * Returns NULL is 'startVertex' is not valid in 'graph'.
+ * Returns NULL if 'startVertex' is not valid in 'graph'.
  * Precondition: 'graph' is connected.
  */
 Edge* primGetMST(Graph* graph, int startVertex);
