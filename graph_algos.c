@@ -36,8 +36,8 @@ MinHeap* initHeap(Graph* graph, int startVertex){
   MinHeap* heap=newHeap(numVertices);
   insert(heap,0,startVertex);
   for(int i=0; i<numVertices; i++){
-    if(graph->vertices[i]!=startVertex){
-      insert(heap,INT_MAX,graph->vertices[i]);
+    if(graph->vertices[i].id!=startVertex){
+      insert(heap,INT_MAX,graph->vertices[i].id);
     }
   }
   return heap;
@@ -55,24 +55,24 @@ Records* initRecords(Graph* graph, int startVertex, int alg){
   Records* record=malloc(sizeof(Records));
   record->numVertices=numVertices;
   record->numTreeEdges=0;
-  graph->heap=initHeap(graph,startVertex);
-  graph->finished=malloc(sizeof(bool)*numVertices);
+  record->heap=initHeap(graph,startVertex);
+  record->finished=malloc(sizeof(bool)*numVertices);
   for(int i=0;i<numVertices;i++){
-    graph->finished[i]=false;
+    record->finished[i]=false;
     //is startvertex finished in the beginning
   }
-  graph->predecessors=malloc(sizeof(int)*numVertices);
+  record->predecessors=malloc(sizeof(int)*numVertices);
   for(int i=0;i<numVertices;i++){
-    graph->predecessors[i]=NOTHING;
+    record->predecessors[i]=NOTHING;
     //predecessor of startvertex
   }
   if(alg==0){//prim get MST
-    graph->tree=malloc(sizeof(Edge)*(numVertices-1));
+    record->tree=malloc(sizeof(Edge)*(numVertices-1));
   }
   if(alg==1){//dijkstra
-    graph->tree=malloc(sizeof(Edge)*(numVertices));
+    record->tree=malloc(sizeof(Edge)*(numVertices));
   }
-
+  return record;
 
   //heap contains all vertex, numtreeed
 }
@@ -113,9 +113,9 @@ AdjList* makePath(Edge* distTree, int vertex, int startVertex){
     nextVertexId=distTree[vertex].fromVertex;
   }
   AdjList* result=malloc(sizeof(AdjList));
-  result->edge->fromVertex=distTree[vertex]->fromVertex;
-  result->edge->toVertex=distTree[vertex]->toVertex;
-  result->edge->weight=distTree[vertex]->weight-distTree[nextVertexId]->weight;
+  result->edge->fromVertex=distTree[vertex].fromVertex;
+  result->edge->toVertex=distTree[vertex].toVertex;
+  result->edge->weight=distTree[vertex].weight-distTree[nextVertexId].weight;
   result->next=makePath(distTree,nextVertexId,startVertex);
   //????????????????????can we directly give the address of distTree[] or copy the whole things
   
