@@ -24,7 +24,7 @@ Edge* newEdge(int fromVertex, int toVertex, int weight){
  * AdjList node 'next'.
  */
 AdjList* newAdjList(Edge* edge, AdjList* next){
-  AdjList* new=malloc(sizeof(AdjList));
+  AdjList* new=calloc(1,sizeof(AdjList));
   new->edge=edge;
   new->next=next;
   return new;

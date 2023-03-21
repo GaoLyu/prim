@@ -132,14 +132,7 @@ AdjList* makePath(Edge* distTree, int vertex, int startVertex){
   else{
     nextVertexId=distTree[vertex].fromVertex;
   }
-  //printf("!!!!!!!!!!!\ncurrentID is %d  nextVerticeId is %d\n\n",vertex,nextVertexId);
   AdjList* result=newAdjList(newEdge(distTree[vertex].fromVertex,distTree[vertex].toVertex,distTree[vertex].weight-distTree[nextVertexId].weight),makePath(distTree,nextVertexId,startVertex));
-
-  // malloc(sizeof(AdjList));
-  // result->edge=newEdge(distTree[vertex].fromVertex,distTree[vertex].toVertex,distTree[vertex].weight-distTree[nextVertexId].weight);
-
-  // result->next=makePath(distTree,nextVertexId,startVertex);
-  //????????????????????can we directly give the address of distTree[] or copy the whole things
   return result;
 }
 
@@ -268,6 +261,7 @@ AdjList* getPaths(Edge* distTree, int numVertices, int startVertex){
     else{
       result[i].edge=temp->edge;
       result[i].next=temp->next;
+      free(temp);
     }
     
   }
