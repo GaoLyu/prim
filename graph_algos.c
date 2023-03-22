@@ -68,7 +68,6 @@ MinHeap* initHeap(Graph* graph, int startVertex){
  * 'startVertex'.
  * Precondition: 'startVertex' is valid in 'graph'
  */
-//????????????????????calloc when to free
 
 Records* initRecords(Graph* graph, int startVertex, int alg){
   int numVertices=graph->numVertices;
@@ -79,12 +78,10 @@ Records* initRecords(Graph* graph, int startVertex, int alg){
   record->finished=malloc(sizeof(bool)*numVertices);
   for(int i=0;i<numVertices;i++){
     record->finished[i]=false;
-    //is startvertex finished in the beginning
   }
   record->predecessors=malloc(sizeof(int)*numVertices);
   for(int i=0;i<numVertices;i++){
     record->predecessors[i]=NOTHING;
-    //predecessor of startvertex
   }
   if(alg==0){//prim get MST
     record->tree=malloc(sizeof(Edge)*(numVertices-1));
@@ -94,8 +91,6 @@ Records* initRecords(Graph* graph, int startVertex, int alg){
   }
 
   return record;
-
-  //heap contains all vertex, numtreeed
 }
 
 /* Returns true iff 'heap' is NULL or is empty. */
@@ -145,13 +140,11 @@ AdjList* makePath(Edge* distTree, int vertex, int startVertex){
  * Returns NULL if 'startVertex' is not valid in 'graph'.
  * Precondition: 'graph' is connected.
  */
-//???????????predesessor of startvertex
 Edge* primGetMST(Graph* graph, int startVertex){
   int numVertices=graph->numVertices;
   if(startVertex<0 || startVertex>=numVertices){
     return NULL;
   }
-  //Vertex currentVertex;
   AdjList* adjList;
   int adjId;
   Records* records=initRecords(graph,startVertex,0);
@@ -196,7 +189,6 @@ Edge* getShortestPaths(Graph* graph, int startVertex){
   if(startVertex<0 || startVertex>=numVertices){
     return NULL;
   }
-  //Vertex currentVertex;
   AdjList* adjList;
   int adjId;
   int totalWeight;
@@ -208,7 +200,6 @@ Edge* getShortestPaths(Graph* graph, int startVertex){
     Vertex currentVertex=graph->vertices[currentId];
     if(currentId==startVertex){
       addTreeEdge(records,currentId,currentId,currentId,0);
-      records->finished[currentId]=true;
     }
     else{
       addTreeEdge(records,currentId,currentId,records->predecessors[currentId],currentWeight);
@@ -263,7 +254,6 @@ AdjList* getPaths(Edge* distTree, int numVertices, int startVertex){
       result[i].next=temp->next;
       free(temp);
     }
-    
   }
   return result;
 }
