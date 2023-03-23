@@ -22,26 +22,6 @@ typedef struct records {
   int numTreeEdges;   // current number of edges in mst
 } Records;
 
-
-
-
-
-
-void pp(AdjList* paths, int numVertices) {
-  if (paths == NULL) return;
-
-  for (int i = 0; i < numVertices; i++) {
-    printf("From vertex %d: ", i);
-    printAdjList(&paths[i]);
-    printf("\n");
-  }
-}
-
-
-
-
-
-
 /*************************************************************************
  ** Suggested helper functions, to help with your program design
  *************************************************************************/
@@ -51,13 +31,13 @@ void pp(AdjList* paths, int numVertices) {
  * 'startVertex'.
  * Precondition: 'startVertex' is valid in 'graph'
  */
-MinHeap* initHeap(Graph* graph, int startVertex){
-  int numVertices=graph->numVertices;
-  MinHeap* heap=newHeap(numVertices);
-  insert(heap,0,startVertex);
-  for(int i=0; i<numVertices; i++){
-    if(graph->vertices[i].id!=startVertex){
-      insert(heap,INT_MAX,graph->vertices[i].id);
+MinHeap* initHeap(Graph* graph, int startVertex) {
+  int numVertices = graph->numVertices;
+  MinHeap* heap = newHeap(numVertices);
+  insert(heap, 0, startVertex);
+  for (int i = 0; i < numVertices; i++) {
+    if (graph->vertices[i].id != startVertex) {
+      insert(heap, INT_MAX, graph->vertices[i].id);
     }
   }
   return heap;
@@ -69,46 +49,44 @@ MinHeap* initHeap(Graph* graph, int startVertex){
  * Precondition: 'startVertex' is valid in 'graph'
  */
 
-Records* initRecords(Graph* graph, int startVertex, int alg){
-  int numVertices=graph->numVertices;
-  Records* record=malloc(sizeof(Records));
-  record->numVertices=numVertices;
-  record->numTreeEdges=0;
-  record->heap=initHeap(graph,startVertex);
-  record->finished=malloc(sizeof(bool)*numVertices);
-  for(int i=0;i<numVertices;i++){
-    record->finished[i]=false;
+Records* initRecords(Graph* graph, int startVertex, int alg) {
+  int numVertices = graph->numVertices;
+  Records* record = malloc(sizeof(Records));
+  record->numVertices = numVertices;
+  record->numTreeEdges = 0;
+  record->heap = initHeap(graph, startVertex);
+  record->finished = malloc(sizeof(bool) * numVertices);
+  for (int i = 0; i < numVertices; i++) {
+    record->finished[i] = false;
   }
-  record->predecessors=malloc(sizeof(int)*numVertices);
-  for(int i=0;i<numVertices;i++){
-    record->predecessors[i]=NOTHING;
+  record->predecessors = malloc(sizeof(int) * numVertices);
+  for (int i = 0; i < numVertices; i++) {
+    record->predecessors[i] = NOTHING;
   }
-  if(alg==0){//prim get MST
-    record->tree=malloc(sizeof(Edge)*(numVertices-1));
+  if (alg == 0) {  // prim get MST
+    record->tree = malloc(sizeof(Edge) * (numVertices - 1));
   }
-  if(alg==1){//dijkstra
-    record->tree=malloc(sizeof(Edge)*(numVertices));
+  if (alg == 1) {  // dijkstra
+    record->tree = malloc(sizeof(Edge) * (numVertices));
   }
 
   return record;
 }
 
 /* Returns true iff 'heap' is NULL or is empty. */
-bool isEmpty(MinHeap* heap){
-  return (heap==NULL || heap->size==0);
-}
+bool isEmpty(MinHeap* heap) { return (heap == NULL || heap->size == 0); }
 
 /* Add a new edge to records at index ind. */
 void addTreeEdge(Records* records, int ind, int fromVertex, int toVertex,
-                 int weight){
-  records->tree[ind].fromVertex=fromVertex;
-  records->tree[ind].toVertex=toVertex;
-  records->tree[ind].weight=weight;
-  if(0<=fromVertex && fromVertex<records->numVertices){
-    records->finished[fromVertex]=true;
+                 int weight) {
+  records->tree[ind].fromVertex = fromVertex;
+  records->tree[ind].toVertex = toVertex;
+  records->tree[ind].weight = weight;
+  if (0 <= fromVertex && fromVertex < records->numVertices) {
+    records->finished[fromVertex] = true;
   }
-  if(0<=toVertex && toVertex<records->numVertices){
-    records->finished[toVertex]=true;
+  if (0 <= toVertex && toVertex < records->numVertices) {
+    records->finished[toVertex] = true;
   }
   records->numTreeEdges++;
 }
@@ -116,18 +94,20 @@ void addTreeEdge(Records* records, int ind, int fromVertex, int toVertex,
 /* Creates and returns a path from 'vertex' to 'startVertex' from edges
  * in the distance tree 'distTree'.
  */
-AdjList* makePath(Edge* distTree, int vertex, int startVertex){
-  if(vertex==startVertex){
+AdjList* makePath(Edge* distTree, int vertex, int startVertex) {
+  if (vertex == startVertex) {
     return NULL;
   }
   int nextVertexId;
-  if(distTree[vertex].fromVertex==vertex){
-    nextVertexId=distTree[vertex].toVertex;
+  if (distTree[vertex].fromVertex == vertex) {
+    nextVertexId = distTree[vertex].toVertex;
+  } else {
+    nextVertexId = distTree[vertex].fromVertex;
   }
-  else{
-    nextVertexId=distTree[vertex].fromVertex;
-  }
-  AdjList* result=newAdjList(newEdge(distTree[vertex].fromVertex,distTree[vertex].toVertex,distTree[vertex].weight-distTree[nextVertexId].weight),makePath(distTree,nextVertexId,startVertex));
+  AdjList* result = newAdjList(
+      newEdge(distTree[vertex].fromVertex, distTree[vertex].toVertex,
+              distTree[vertex].weight - distTree[nextVertexId].weight),
+      makePath(distTree, nextVertexId, startVertex));
   return result;
 }
 
@@ -140,41 +120,42 @@ AdjList* makePath(Edge* distTree, int vertex, int startVertex){
  * Returns NULL if 'startVertex' is not valid in 'graph'.
  * Precondition: 'graph' is connected.
  */
-Edge* primGetMST(Graph* graph, int startVertex){
-  int numVertices=graph->numVertices;
-  if(startVertex<0 || startVertex>=numVertices){
+Edge* primGetMST(Graph* graph, int startVertex) {
+  int numVertices = graph->numVertices;
+  if (startVertex < 0 || startVertex >= numVertices) {
     return NULL;
   }
   AdjList* adjList;
   int adjId;
-  Records* records=initRecords(graph,startVertex,0);
-  while(!(isEmpty(records->heap))){
-    HeapNode currentNode=extractMin(records->heap);
-    int currentId=currentNode.id;
-    int currentWeight=currentNode.priority;
-    Vertex currentVertex=graph->vertices[currentId];
-    if(currentId!=startVertex){
-      addTreeEdge(records,records->numTreeEdges,currentId,records->predecessors[currentId],currentWeight);
+  Records* records = initRecords(graph, startVertex, 0);
+  while (!(isEmpty(records->heap))) {
+    HeapNode currentNode = extractMin(records->heap);
+    int currentId = currentNode.id;
+    int currentWeight = currentNode.priority;
+    Vertex currentVertex = graph->vertices[currentId];
+    if (currentId != startVertex) {
+      addTreeEdge(records, records->numTreeEdges, currentId,
+                  records->predecessors[currentId], currentWeight);
     }
-    adjList=currentVertex.adjList;
-    while(adjList!=NULL){
-      if(adjList->edge->fromVertex==currentId){
-        adjId=adjList->edge->toVertex;
+    adjList = currentVertex.adjList;
+    while (adjList != NULL) {
+      if (adjList->edge->fromVertex == currentId) {
+        adjId = adjList->edge->toVertex;
+      } else {
+        adjId = adjList->edge->fromVertex;
       }
-      else{
-        adjId=adjList->edge->fromVertex;
+      if (records->finished[adjId] == false &&
+          adjList->edge->weight < getPriority(records->heap, adjId)) {
+        decreasePriority(records->heap, adjId, adjList->edge->weight);
+        records->predecessors[adjId] = currentId;
       }
-      if(records->finished[adjId]==false && adjList->edge->weight<getPriority(records->heap,adjId)){
-        decreasePriority(records->heap,adjId,adjList->edge->weight);
-        records->predecessors[adjId]=currentId;
-      }
-      adjList=adjList->next;
+      adjList = adjList->next;
     }
   }
   deleteHeap(records->heap);
   free(records->finished);
   free(records->predecessors);
-  Edge* result=records->tree;
+  Edge* result = records->tree;
   free(records);
   return result;
 }
@@ -184,46 +165,45 @@ Edge* primGetMST(Graph* graph, int startVertex){
  * Returns NULL is 'startVertex' is not valid in 'graph'.
  * Precondition: 'graph' is connected.
  */
-Edge* getShortestPaths(Graph* graph, int startVertex){
-  int numVertices=graph->numVertices;
-  if(startVertex<0 || startVertex>=numVertices){
+Edge* getShortestPaths(Graph* graph, int startVertex) {
+  int numVertices = graph->numVertices;
+  if (startVertex < 0 || startVertex >= numVertices) {
     return NULL;
   }
   AdjList* adjList;
   int adjId;
   int totalWeight;
-  Records* records=initRecords(graph,startVertex,1);
-  while(!(isEmpty(records->heap))){
-    HeapNode currentNode=extractMin(records->heap);
-    int currentId=currentNode.id;
-    int currentWeight=currentNode.priority;
-    Vertex currentVertex=graph->vertices[currentId];
-    if(currentId==startVertex){
-      addTreeEdge(records,currentId,currentId,currentId,0);
+  Records* records = initRecords(graph, startVertex, 1);
+  while (!(isEmpty(records->heap))) {
+    HeapNode currentNode = extractMin(records->heap);
+    int currentId = currentNode.id;
+    int currentWeight = currentNode.priority;
+    Vertex currentVertex = graph->vertices[currentId];
+    if (currentId == startVertex) {
+      addTreeEdge(records, currentId, currentId, currentId, 0);
+    } else {
+      addTreeEdge(records, currentId, currentId,
+                  records->predecessors[currentId], currentWeight);
     }
-    else{
-      addTreeEdge(records,currentId,currentId,records->predecessors[currentId],currentWeight);
-    }
-    adjList=currentVertex.adjList;
-    while(adjList!=NULL){
-      if(adjList->edge->fromVertex==currentId){
-        adjId=adjList->edge->toVertex;
+    adjList = currentVertex.adjList;
+    while (adjList != NULL) {
+      if (adjList->edge->fromVertex == currentId) {
+        adjId = adjList->edge->toVertex;
+      } else {
+        adjId = adjList->edge->fromVertex;
       }
-      else{
-        adjId=adjList->edge->fromVertex;
+      totalWeight = adjList->edge->weight + currentWeight;
+      if (totalWeight < getPriority(records->heap, adjId)) {
+        decreasePriority(records->heap, adjId, totalWeight);
+        records->predecessors[adjId] = currentId;
       }
-      totalWeight=adjList->edge->weight+currentWeight;
-      if(totalWeight<getPriority(records->heap,adjId)){
-        decreasePriority(records->heap,adjId,totalWeight);
-        records->predecessors[adjId]=currentId;
-      }
-      adjList=adjList->next;
+      adjList = adjList->next;
     }
   }
   deleteHeap(records->heap);
   free(records->finished);
   free(records->predecessors);
-  Edge* result=records->tree;
+  Edge* result = records->tree;
   free(records);
   return result;
 }
@@ -237,21 +217,20 @@ Edge* getShortestPaths(Graph* graph, int startVertex){
  *   where w_0 + w_1 + ... + w_n = distance(id)
  * Returns NULL if 'startVertex' is not valid in 'distTree'.
  */
-AdjList* getPaths(Edge* distTree, int numVertices, int startVertex){
-  if(startVertex<0 || startVertex>=numVertices){
+AdjList* getPaths(Edge* distTree, int numVertices, int startVertex) {
+  if (startVertex < 0 || startVertex >= numVertices) {
     return NULL;
   }
   AdjList* temp;
-  AdjList* result=malloc(sizeof(AdjList)*numVertices);
-  for(int i=0;i<numVertices;i++){
-    temp=makePath(distTree,i,startVertex);
-    if(temp==NULL){
-      result[i].edge=NULL;
-      result[i].next=NULL;
-    }
-    else{
-      result[i].edge=temp->edge;
-      result[i].next=temp->next;
+  AdjList* result = malloc(sizeof(AdjList) * numVertices);
+  for (int i = 0; i < numVertices; i++) {
+    temp = makePath(distTree, i, startVertex);
+    if (temp == NULL) {
+      result[i].edge = NULL;
+      result[i].next = NULL;
+    } else {
+      result[i].edge = temp->edge;
+      result[i].next = temp->next;
       free(temp);
     }
   }

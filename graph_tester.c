@@ -62,8 +62,8 @@ int main(int argc, char* argv[]) {
 
   printGraph(graph);
 
-  runPrim(graph, 0);  // try other vertices!
-  runDijkstra(graph, 0);
+  runPrim(graph, 5);  // try other vertices!
+  runDijkstra(graph, 5);
 
   deleteGraph(graph);
   return 0;

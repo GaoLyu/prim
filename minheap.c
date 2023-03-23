@@ -16,11 +16,11 @@
 /* Returns True if 'maybeIdx' is a valid index in minheap 'heap', and 'heap'
  * stores an element at that index. Returns False otherwise.
  */
-bool isValidIndex(MinHeap* heap, int maybeIdx){
-    if (ROOT_INDEX <= maybeIdx && maybeIdx <= heap->size){
-        return true;
-    }
-    return false;
+bool isValidIndex(MinHeap* heap, int maybeIdx) {
+  if (ROOT_INDEX <= maybeIdx && maybeIdx <= heap->size) {
+    return true;
+  }
+  return false;
 }
 
 /* Returns the index of the left child of a node at index 'nodeIndex' in
@@ -61,13 +61,12 @@ int parentIdx(MinHeap* heap, int nodeIndex) {
   }
 }
 
-
 /* Swaps contents of heap->arr[index1] and heap->arr[index2] if both 'index1'
  * and 'index2' are valid indices for minheap 'heap'. Has no effect
  * otherwise.
  */
-void swap(MinHeap* heap, int index1, int index2){
-    if (isValidIndex(heap, index1) && isValidIndex(heap, index2)) {
+void swap(MinHeap* heap, int index1, int index2) {
+  if (isValidIndex(heap, index1) && isValidIndex(heap, index2)) {
     HeapNode copyNode = heap->arr[index1];
     int id1 = heap->arr[index1].id;
     int id2 = heap->arr[index2].id;
@@ -83,9 +82,9 @@ void swap(MinHeap* heap, int index1, int index2){
  * 'nodeIndex', if 'nodeIndex' is a valid index for heap. Has no effect
  * otherwise.
  */
-void bubbleUp(MinHeap* heap, int nodeIndex){
-    int parentIdx;
-    while (nodeIndex > ROOT_INDEX && nodeIndex <= heap->size) {
+void bubbleUp(MinHeap* heap, int nodeIndex) {
+  int parentIdx;
+  while (nodeIndex > ROOT_INDEX && nodeIndex <= heap->size) {
     parentIdx = nodeIndex / 2;
     if (heap->arr[parentIdx].priority > heap->arr[nodeIndex].priority) {
       swap(heap, parentIdx, nodeIndex);
@@ -96,12 +95,11 @@ void bubbleUp(MinHeap* heap, int nodeIndex){
   }
 }
 
-
 /* Bubbles down the element newly inserted into minheap 'heap' at the root,
  * if it exists. Has no effect otherwise.
  */
-void bubbleDown(MinHeap* heap){
-    if (heap->size <= ROOT_INDEX) {
+void bubbleDown(MinHeap* heap) {
+  if (heap->size <= ROOT_INDEX) {
     return;
   }
   int parent, left, right;
@@ -111,10 +109,12 @@ void bubbleDown(MinHeap* heap){
     left = leftIdx(heap, parent);
     right = rightIdx(heap, parent);
     minIdx = parent;
-    if (left != NOTHING && heap->arr[left].priority < heap->arr[parent].priority) {
+    if (left != NOTHING &&
+        heap->arr[left].priority < heap->arr[parent].priority) {
       minIdx = left;
     }
-    if (right != NOTHING && heap->arr[right].priority < heap->arr[minIdx].priority) {
+    if (right != NOTHING &&
+        heap->arr[right].priority < heap->arr[minIdx].priority) {
       minIdx = right;
     }
     if (minIdx != parent) {
@@ -126,44 +126,39 @@ void bubbleDown(MinHeap* heap){
   }
 }
 
-
 /* Returns node at index 'nodeIndex' in minheap 'heap'.
  * Precondition: 'nodeIndex' is a valid index in 'heap'
  *               'heap' is non-empty
  */
-HeapNode nodeAt(MinHeap* heap, int nodeIndex){
-    return heap->arr[nodeIndex];
-}
+HeapNode nodeAt(MinHeap* heap, int nodeIndex) { return heap->arr[nodeIndex]; }
 
 /* Returns priority of node at index 'nodeIndex' in minheap 'heap'.
  * Precondition: 'nodeIndex' is a valid index in 'heap'
  *               'heap' is non-empty
  */
-int priorityAt(MinHeap* heap, int nodeIndex){
-    if(!(isValidIndex(heap,nodeIndex))){
-        return NOTHING;
-    }
-    return nodeAt(heap,nodeIndex).priority;
+int priorityAt(MinHeap* heap, int nodeIndex) {
+  if (!(isValidIndex(heap, nodeIndex))) {
+    return NOTHING;
+  }
+  return nodeAt(heap, nodeIndex).priority;
 }
 
 /* Returns ID of node at index 'nodeIndex' in minheap 'heap'.
  * Precondition: 'nodeIndex' is a valid index in 'heap'
  *               'heap' is non-empty
  */
-int idAt(MinHeap* heap, int nodeIndex){
-    if(!(isValidIndex(heap,nodeIndex))){
-        return NOTHING;
-    }
-    return nodeAt(heap,nodeIndex).id;
+int idAt(MinHeap* heap, int nodeIndex) {
+  if (!(isValidIndex(heap, nodeIndex))) {
+    return NOTHING;
+  }
+  return nodeAt(heap, nodeIndex).id;
 }
 
 /* Returns index of node with ID 'id' in minheap 'heap'.
  * Precondition: 'id' is a valid ID in 'heap'
  *               'heap' is non-empty
  */
-int indexOf(MinHeap* heap, int id){
-    return heap->indexMap[id];
-}
+int indexOf(MinHeap* heap, int id) { return heap->indexMap[id]; }
 
 /*********************************************************************
  * Required functions
@@ -171,24 +166,22 @@ int indexOf(MinHeap* heap, int id){
 /* Returns the node with minimum priority in minheap 'heap'.
  * Precondition: heap is non-empty
  */
-HeapNode getMin(MinHeap* heap){
-    return heap->arr[ROOT_INDEX];
-}
+HeapNode getMin(MinHeap* heap) { return heap->arr[ROOT_INDEX]; }
 
 /* Removes and returns the node with minimum priority in minheap 'heap'.
  * Precondition: heap is non-empty
  */
-HeapNode extractMin(MinHeap* heap){
-    HeapNode min = getMin(heap);
-    int size = heap->size;
-    int idlast = heap->arr[size].id;
-    int idmin = heap->arr[ROOT_INDEX].id;
-    heap->arr[ROOT_INDEX] = heap->arr[size];
-    heap->indexMap[idlast] = heap->indexMap[idmin];
-    heap->indexMap[idmin] = NOTHING;
-    heap->size--;
-    bubbleDown(heap);
-    return min;
+HeapNode extractMin(MinHeap* heap) {
+  HeapNode min = getMin(heap);
+  int size = heap->size;
+  int idlast = heap->arr[size].id;
+  int idmin = heap->arr[ROOT_INDEX].id;
+  heap->arr[ROOT_INDEX] = heap->arr[size];
+  heap->indexMap[idlast] = heap->indexMap[idmin];
+  heap->indexMap[idmin] = NOTHING;
+  heap->size--;
+  bubbleDown(heap);
+  return min;
 }
 
 /* Inserts a new node with priority 'priority' and ID 'id' into minheap 'heap'.
@@ -196,20 +189,20 @@ HeapNode extractMin(MinHeap* heap){
  *               0 <= 'id' < heap->capacity
  *               heap->size < heap->capacity
  */
-void insert(MinHeap* heap, int priority, int id){
-    heap->size++;
-    int size = heap->size;
-    heap->arr[size].priority = priority;
-    heap->arr[size].id = id;
-    heap->indexMap[id] = size;
-    bubbleUp(heap, size);
+void insert(MinHeap* heap, int priority, int id) {
+  heap->size++;
+  int size = heap->size;
+  heap->arr[size].priority = priority;
+  heap->arr[size].id = id;
+  heap->indexMap[id] = size;
+  bubbleUp(heap, size);
 }
 
 /* Returns priority of the node with ID 'id' in 'heap'.
  * Precondition: 'id' is a valid node ID in 'heap'.
  */
-int getPriority(MinHeap* heap, int id){
-    return priorityAt(heap,indexOf(heap,id));
+int getPriority(MinHeap* heap, int id) {
+  return priorityAt(heap, indexOf(heap, id));
 }
 
 /* Sets priority of node with ID 'id' in minheap 'heap' to 'newPriority', if
@@ -217,29 +210,28 @@ int getPriority(MinHeap* heap, int id){
  * 'newPriority', and returns True. Has no effect and returns False, otherwise.
  * Note: this function bubbles up the node until the heap property is restored.
  */
-bool decreasePriority(MinHeap* heap, int id, int newPriority){
-    ///id valid????????????????????????????????/
-    if (id >= heap->capacity || id < 0) { 
+bool decreasePriority(MinHeap* heap, int id, int newPriority) {
+  if (id >= heap->capacity || id < 0) {
     return false;
-    }
-    int index = heap->indexMap[id];
-    if (!(isValidIndex(heap, index))) {
+  }
+  int index = heap->indexMap[id];
+  if (!(isValidIndex(heap, index))) {
     return false;
-    }
-    if (heap->arr[index].priority <= newPriority) {
+  }
+  if (heap->arr[index].priority <= newPriority) {
     return false;
-    } else {
+  } else {
     heap->arr[index].priority = newPriority;
     bubbleUp(heap, index);
     return true;
-    }
+  }
 }
 
 /* Returns a newly created empty minheap with initial capacity 'capacity'.
  * Precondition: capacity >= 0
  */
-MinHeap* newHeap(int capacity){
-    MinHeap* new = malloc(sizeof(MinHeap));
+MinHeap* newHeap(int capacity) {
+  MinHeap* new = malloc(sizeof(MinHeap));
   new->size = 0;
   new->capacity = capacity;
   new->arr = malloc((capacity + 1) * sizeof(HeapNode));
@@ -252,12 +244,11 @@ MinHeap* newHeap(int capacity){
 
 /* Frees all memory allocated for minheap 'heap'.
  */
-void deleteHeap(MinHeap* heap){
-    free(heap->arr);
+void deleteHeap(MinHeap* heap) {
+  free(heap->arr);
   free(heap->indexMap);
   free(heap);
 }
-
 
 /*********************************************************************
  ** Helper functions provided in the starter code
